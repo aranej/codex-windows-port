@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Codex Desktop for Windows</title>
+    <link rel="stylesheet" href="./styles.css" />
+  </head>
+  <body>
+    <div class="app">
+      <header class="header">
+        <div class="title">
+          <div class="title__h1">Codex Desktop for Windows</div>
+          <div class="title__sub">Terminal-like UI • JSON-RPC via preload bridge</div>
+        </div>
+
+        <div class="controls" role="group" aria-label="Session controls">
+          <button id="btnStart" class="btn btn--primary" type="button">Start</button>
+          <button id="btnStop" class="btn" type="button" disabled>Stop</button>
+          <button id="btnClear" class="btn" type="button">Clear</button>
+        </div>
+      </header>
+
+      <main class="main">
+        <section class="output" aria-label="Output">
+          <div id="output" class="output__inner" role="log" aria-live="polite" aria-relevant="additions"></div>
+        </section>
+
+        <section class="composer" aria-label="Command input">
+          <form id="commandForm" class="composer__form" autocomplete="off">
+            <label class="composer__label" for="commandInput">Command</label>
+            <div class="composer__row">
+              <input
+                id="commandInput"
+                class="composer__input"
+                type="text"
+                placeholder="Type a command (e.g. /help, status, run tests…)"
+                spellcheck="false"
+                autocapitalize="off"
+                autocomplete="off"
+              />
+              <button id="btnSend" class="btn btn--accent" type="submit">Send</button>
+            </div>
+          </form>
+        </section>
+      </main>
+
+      <footer class="statusbar" aria-label="Status bar">
+        <div class="statusbar__left">
+          <span class="pill" id="statusPill">DISCONNECTED</span>
+          <span class="statusbar__text" id="statusText">Ready.</span>
+        </div>
+        <div class="statusbar__right">
+          <span class="statusbar__hint">Enter to send • Shift+Enter to newline (future)</span>
+        </div>
+      </footer>
+    </div>
+
+    <script src="./renderer.js"></script>
+  </body>
+</html>

@@ -1,0 +1,31 @@
+{
+  "name": "codex-windows-port",
+  "version": "0.1.0",
+  "description": "Codex Desktop for Windows 11 — open-source Electron wrapper around @openai/codex CLI",
+  "main": "src/main.js",
+  "scripts": {
+    "start": "electron .",
+    "make": "electron-forge make",
+    "package": "electron-forge package"
+  },
+  "dependencies": {
+    "@openai/codex": "^0.1.0",
+    "node-pty": "^1.0.0"
+  },
+  "devDependencies": {
+    "electron": "^34.0.0",
+    "@electron-forge/cli": "^7.0.0",
+    "@electron-forge/maker-squirrel": "^7.0.0",
+    "@electron-forge/maker-zip": "^7.0.0",
+    "@electron-forge/plugin-auto-unpack-natives": "^7.0.0"
+  },
+  "config": {
+    "forge": "./forge.config.js"
+  },
+  "author": "Clawd Pool",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/aranej/codex-windows-port.git"
+  }
+}

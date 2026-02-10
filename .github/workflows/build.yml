@@ -1,0 +1,36 @@
+name: build
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    name: build-windows
+    runs-on: windows-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build (make)
+        run: npm run make
+
+      - name: Upload artifact (out/)
+        uses: actions/upload-artifact@v4
+        with:
+          name: codex-desktop-windows
+          path: out/
+          if-no-files-found: error
