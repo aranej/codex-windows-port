@@ -10,10 +10,19 @@ Open-source **Electron wrapper** pre **@openai/codex** CLI na **Windows 11 (x64)
 
 ![Screenshot placeholder](docs/screenshot.png)
 
+## Features
+
+- ChatGPT login / API key auth
+- Onboarding wizard
+- xterm.js terminal
+- Dark theme: Catppuccin Mocha
+- Windows Credential Manager integration
+
 ## Prerequisites
 
 - **Node.js 20+**
 - **npm**
+- **Visual Studio Build Tools** (pre native modules ako `keytar`/`node-pty`)
 - **OpenAI API key** (nastav cez environment variable, napr. `OPENAI_API_KEY`)
 
 ## Install & Run
@@ -55,6 +64,12 @@ Výstup je typicky v adresári `out/`.
 | (backend agent)   |
 +-------------------+
 ```
+
+## Security
+
+- `contextIsolation` enabled
+- `nodeIntegration` disabled
+- Credentials stored via OS keychain (Windows Credential Manager cez `keytar`)
 
 ## Credits
 

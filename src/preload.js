@@ -12,10 +12,20 @@ function onOutput(handler) {
 }
 
 const codexAPI = {
+  // Required names (renderer depends on these):
   start: () => ipcRenderer.invoke('codex:start'),
   send: (payload) => ipcRenderer.invoke('codex:send', payload),
   stop: () => ipcRenderer.invoke('codex:stop'),
   onOutput,
+
+  // New API (Phase 3):
+  login: () => ipcRenderer.invoke('codex:login'),
+  authStatus: () => ipcRenderer.invoke('codex:auth-status'),
+  logout: () => ipcRenderer.invoke('codex:logout'),
+  pickWorkspace: () => ipcRenderer.invoke('codex:pick-workspace'),
+
+  // Internal: used by the OPENAI_API_KEY prompt window (no nodeIntegration).
+  __submitOpenAIKey: (keyOrNull) => ipcRenderer.invoke('openai-key:submit', keyOrNull),
 };
 
 contextBridge.exposeInMainWorld('codexAPI', codexAPI);

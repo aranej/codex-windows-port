@@ -1,6 +1,6 @@
 {
   "name": "codex-windows-port",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "Codex Desktop for Windows 11 — open-source Electron wrapper around @openai/codex CLI",
   "main": "src/main.js",
   "scripts": {
@@ -10,7 +10,10 @@
   },
   "dependencies": {
     "@openai/codex": "^0.1.0",
-    "node-pty": "^1.0.0"
+    "node-pty": "^1.0.0",
+    "xterm": "^5.5.0",
+    "@xterm/addon-fit": "^0.10.0",
+    "keytar": "^7.9.0"
   },
   "devDependencies": {
     "electron": "^34.0.0",

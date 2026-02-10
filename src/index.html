@@ -4,14 +4,119 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Codex Desktop for Windows</title>
+
+    <!-- App styles -->
     <link rel="stylesheet" href="./styles.css" />
+
+    <!-- xterm.js (CDN) -->
+    <link rel="stylesheet" href="https://unpkg.com/xterm/css/xterm.css" />
   </head>
   <body>
+    <!-- Onboarding wizard (shown on first launch) -->
+    <div id="wizardOverlay" class="wizard-overlay" aria-hidden="true">
+      <div class="wizard" role="dialog" aria-modal="true" aria-label="Onboarding">
+        <div class="wizard__header">
+          <div class="wizard__title">Welcome to Codex Desktop for Windows</div>
+          <div class="wizard__subtitle">Quick setup (one-time)</div>
+        </div>
+
+        <!-- Step 1: Auth -->
+        <div class="wizard-step" data-step="1">
+          <h2 class="wizard-step__h">Step 1 — Auth</h2>
+          <p class="wizard-step__p">Vyber spôsob autentifikácie.</p>
+
+          <div class="wizard-grid">
+            <button id="btnWizardChatGPT" class="wizard-btn wizard-btn--primary" type="button">
+              Sign in with ChatGPT
+            </button>
+
+            <div class="wizard-card">
+              <div class="wizard-card__title">Use API Key</div>
+              <div class="wizard-card__body">
+                <input id="apiKeyInput" class="wizard-input" type="password" placeholder="Paste API key…" />
+                <div class="wizard-row">
+                  <button id="btnWizardUseApiKey" class="wizard-btn" type="button">Continue</button>
+                </div>
+                <div class="wizard-note">Pozn.: spôsob volania API key môže závisieť od implementácie preload bridge.</div>
+              </div>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <div></div>
+            <button id="btnWizardNext1" class="wizard-btn wizard-btn--accent" type="button">Next</button>
+          </div>
+        </div>
+
+        <!-- Step 2: Preflight -->
+        <div class="wizard-step" data-step="2" hidden>
+          <h2 class="wizard-step__h">Step 2 — Preflight</h2>
+          <p class="wizard-step__p">Overenie, či je auth a spojenie pripravené.</p>
+
+          <div class="wizard-preflight">
+            <div class="pill" id="preflightPill">UNKNOWN</div>
+            <div class="wizard-preflight__text" id="preflightText">Not checked.</div>
+          </div>
+
+          <div class="wizard-actions">
+            <button id="btnWizardBack2" class="wizard-btn" type="button">Back</button>
+            <div class="wizard-actions__right">
+              <button id="btnWizardCheckAuth" class="wizard-btn" type="button">Check</button>
+              <button id="btnWizardNext2" class="wizard-btn wizard-btn--accent" type="button">Next</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- Step 3: Workspace -->
+        <div class="wizard-step" data-step="3" hidden>
+          <h2 class="wizard-step__h">Step 3 — Workspace</h2>
+          <p class="wizard-step__p">Vyber workspace folder pre lokálne súbory.</p>
+
+          <div class="wizard-card">
+            <div class="wizard-card__title">Workspace folder</div>
+            <div class="wizard-card__body">
+              <div class="wizard-row">
+                <button id="btnWizardPickWorkspace" class="wizard-btn wizard-btn--primary" type="button">Choose Workspace Folder</button>
+              </div>
+              <div class="wizard-note" id="workspacePath">Not selected.</div>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button id="btnWizardBack3" class="wizard-btn" type="button">Back</button>
+            <button id="btnWizardNext3" class="wizard-btn wizard-btn--accent" type="button">Next</button>
+          </div>
+        </div>
+
+        <!-- Step 4: Done -->
+        <div class="wizard-step" data-step="4" hidden>
+          <h2 class="wizard-step__h">Step 4 — Done</h2>
+          <p class="wizard-step__p">Setup hotový. Pokračuj do terminálu.</p>
+
+          <div class="wizard-card">
+            <div class="wizard-card__title">Ready</div>
+            <div class="wizard-card__body">
+              <div class="wizard-note">Klikni na Finish a otvorí sa hlavný terminal.</div>
+            </div>
+          </div>
+
+          <div class="wizard-actions">
+            <button id="btnWizardBack4" class="wizard-btn" type="button">Back</button>
+            <button id="btnWizardFinish" class="wizard-btn wizard-btn--primary" type="button">Finish</button>
+          </div>
+        </div>
+
+        <div class="wizard__footer">
+          <span class="wizard__hint">Tip: Setup sa dá resetnúť vymazaním localStorage kľúča <code>codexWizardDone</code>.</span>
+        </div>
+      </div>
+    </div>
+
     <div class="app">
       <header class="header">
         <div class="title">
           <div class="title__h1">Codex Desktop for Windows</div>
-          <div class="title__sub">Terminal-like UI • JSON-RPC via preload bridge</div>
+          <div class="title__sub">Terminal UI • JSON-RPC via preload bridge</div>
         </div>
 
         <div class="controls" role="group" aria-label="Session controls">
@@ -22,8 +127,8 @@
       </header>
 
       <main class="main">
-        <section class="output" aria-label="Output">
-          <div id="output" class="output__inner" role="log" aria-live="polite" aria-relevant="additions"></div>
+        <section class="output" aria-label="Terminal">
+          <div id="terminal" class="terminal" aria-label="xterm"></div>
         </section>
 
         <section class="composer" aria-label="Command input">
@@ -51,10 +156,14 @@
           <span class="statusbar__text" id="statusText">Ready.</span>
         </div>
         <div class="statusbar__right">
-          <span class="statusbar__hint">Enter to send • Shift+Enter to newline (future)</span>
+          <span class="statusbar__hint">Enter to send</span>
         </div>
       </footer>
     </div>
+
+    <!-- xterm.js (CDN) -->
+    <script src="https://unpkg.com/xterm/lib/xterm.js"></script>
+    <script src="https://unpkg.com/xterm-addon-fit/lib/xterm-addon-fit.js"></script>
 
     <script src="./renderer.js"></script>
   </body>
